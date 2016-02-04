@@ -29,6 +29,7 @@ public class MinOrientedBoundingBoxTest //main class
 {
     public static void main(String[] args) throws IOException
     {
+    	
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
@@ -39,7 +40,7 @@ public class MinOrientedBoundingBoxTest //main class
         });
     }
 
-private static void createAndShowGUI() // create a JFrame to show the result
+private static void createAndShowGUI() // create a JFrame to show the Points
     {
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,8 +50,8 @@ private static void createAndShowGUI() // create a JFrame to show the result
         f.setVisible(true);
     }
 }
-// 2D panel show the (x,y)10 points values with mouse listener
-class MinOrientedBoundingBoxTestPanel extends JPanel  
+
+class MinOrientedBoundingBoxTestPanel extends JPanel  // set the x,y points in the layout using with mouselister for moving the x,y points object
     implements MouseListener, MouseMotionListener
 {
     private final List<Point2D> points;
@@ -58,17 +59,17 @@ class MinOrientedBoundingBoxTestPanel extends JPanel
 
     MinOrientedBoundingBoxTestPanel()
     {
-        points = new ArrayList<Point2D>();
+        points = new ArrayList<Point2D>(); //
 
         Random r = new Random(0);
-        for (int i=0; i<10; i++) // count the 10 (x,y) points and set the position of the JFrame
+        for (int i=0; i<10; i++)  // x,y poins stored in the arraylist and count the value using loop
         {
-            double x = 200 + r.nextDouble() * 200;
+            double x = 200 + r.nextDouble() * 200; 
             double y = 200 + r.nextDouble() * 200;
             points.add(new Point2D.Double(x,y));
         }
 
-        addMouseListener(this);
+        addMouseListener(this);				//mouse listener
         addMouseMotionListener(this);
     }
 
@@ -77,14 +78,14 @@ class MinOrientedBoundingBoxTestPanel extends JPanel
     {
         super.paintComponent(gr);
         Graphics2D g = (Graphics2D)gr;
-        g.setRenderingHint(
-            RenderingHints.KEY_ANTIALIASING,  
+        g.setRenderingHint					//subclass the associated {@link RenderingHints.Key} class.
+        (RenderingHints.KEY_ANTIALIASING,  
             RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.white);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.white);			// set backgorund color
+        g.fillRect(0, 0, getWidth(), getHeight()); // rect bounding random size
 
-        g.setColor(Color.BLACK);
-        drawPoints(g, points);
+        g.setColor(Color.BLACK); // pointer color
+        drawPoints(g, points);	
 
         boolean showConvexHull = false;
         showConvexHull = true;
@@ -92,7 +93,7 @@ class MinOrientedBoundingBoxTestPanel extends JPanel
         {
             List<Point2D> convexHullPoints = 
                 MinOrientedBoundingBoxComputer.computeConvexHullPoints(
-                    points);
+                    points);	// boundingbox compute the point values
             Path2D convexHullPath = 
                 MinOrientedBoundingBoxComputer.createPath(
                     convexHullPoints);
@@ -108,15 +109,15 @@ class MinOrientedBoundingBoxTestPanel extends JPanel
         g.draw(p);
     }
 
-    static void drawPoints(Graphics2D g, List<Point2D> points)
+    static void drawPoints(Graphics2D g, List<Point2D> points) 
     {
         double r = 3;
         for (Point2D point : points)
         {
             double x = point.getX();
             double y = point.getY();
-            g.fill(new Ellipse2D.Double(
-                x-r, y-r, r+r, r+r));
+            g.fill(new  Ellipse2D.Double	//The <code>Ellipse2D</code> class describes an ellipse that is defined by a framing rectangle
+            		(x-r, y-r, r+r, r+r));
         }
     }
 
@@ -178,16 +179,18 @@ class MinOrientedBoundingBoxTestPanel extends JPanel
 
 class MinOrientedBoundingBoxComputer
 {
-    static List<Point2D> computeCorners(List<Point2D> points)
+    static List<Point2D> computeCorners(List<Point2D> points) // bounding points compute to draw the corners
     {
         List<Point2D> convexHullPoints = 
-            computeConvexHullPoints(points);
+            computeConvexHullPoints(points); 
         int alignmentPointIndex = 
             computeAlignmentPointIndex(convexHullPoints);
         Rectangle2D r = computeAlignedBounds(
             convexHullPoints, alignmentPointIndex);
-
-        List<Point2D> alignedCorners = new ArrayList<Point2D>();
+        
+     // stored the min and max of x,y values in the list
+        
+        List<Point2D> alignedCorners = new ArrayList<Point2D>(); 
         alignedCorners.add(new Point2D.Double(r.getMinX(), r.getMinY()));
         alignedCorners.add(new Point2D.Double(r.getMaxX(), r.getMinY()));
         alignedCorners.add(new Point2D.Double(r.getMaxX(), r.getMaxY()));
@@ -197,7 +200,7 @@ class MinOrientedBoundingBoxComputer
         double angleRad = computeEdgeAngleRad(
             convexHullPoints, alignmentPointIndex);
 
-        AffineTransform at = new AffineTransform();
+        AffineTransform at = new AffineTransform(); // recalculated the points values
         at.concatenate(
             AffineTransform.getTranslateInstance(
                 center.getX(), center.getY()));
@@ -205,7 +208,7 @@ class MinOrientedBoundingBoxComputer
             AffineTransform.getRotateInstance(angleRad));
 
         List<Point2D> corners = transform(alignedCorners, at);
-        return corners;
+        return corners;        
     }
 
     private static int computeAlignmentPointIndex(
@@ -239,7 +242,9 @@ class MinOrientedBoundingBoxComputer
         double angleRad = Math.atan2(dy, dx);
         return angleRad;
     }
-
+    
+//  compute the bounding x,y points values
+    
     private static Rectangle2D computeAlignedBounds(
         List<Point2D> points, int index)
     {
@@ -251,6 +256,7 @@ class MinOrientedBoundingBoxComputer
         return bounds;
     }
 
+   
     private static AffineTransform createTransform(
         double angleRad, Point2D center)
     {
@@ -274,8 +280,7 @@ class MinOrientedBoundingBoxComputer
         }
         return result;
     }
-
-
+// compute the max value points to create a rectangular 2D object
     private static Rectangle2D computeBounds(
         List<Point2D> points)
     {
@@ -348,6 +353,7 @@ class MinOrientedBoundingBoxComputer
 // (Not a "nice" implementation, but the first one that 
 // I found with a websearch. Maybe, when I'm bored, I'll
 // replace it with another one...)
+
 class FastConvexHull
 {
     public static ArrayList<Point> execute(ArrayList<Point> points)
