@@ -25,7 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 
-public class MinOrientedBoundingBoxTest
+public class MinOrientedBoundingBoxTest //main class
 {
     public static void main(String[] args) throws IOException
     {
@@ -49,8 +49,8 @@ private static void createAndShowGUI() // create a JFrame to show the result
         f.setVisible(true);
     }
 }
-
-class MinOrientedBoundingBoxTestPanel extends JPanel  // set the x,y points in the layout using with mouse
+// 2D panel show the (x,y)10 points values with mouse listener
+class MinOrientedBoundingBoxTestPanel extends JPanel  
     implements MouseListener, MouseMotionListener
 {
     private final List<Point2D> points;
@@ -61,7 +61,7 @@ class MinOrientedBoundingBoxTestPanel extends JPanel  // set the x,y points in t
         points = new ArrayList<Point2D>();
 
         Random r = new Random(0);
-        for (int i=0; i<10; i++)
+        for (int i=0; i<10; i++) // count the 10 (x,y) points and set the position of the JFrame
         {
             double x = 200 + r.nextDouble() * 200;
             double y = 200 + r.nextDouble() * 200;
