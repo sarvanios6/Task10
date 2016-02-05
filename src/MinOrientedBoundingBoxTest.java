@@ -1,3 +1,5 @@
+//http://stackoverflow.com/questions/23905127/oriented-minimum-bounding-box
+//http://gis.stackexchange.com/questions/22895/how-to-find-the-minimum-area-rectangle-for-given-points
 
 
 import java.awt.Color;
@@ -69,7 +71,7 @@ class MinOrientedBoundingBoxTestPanel extends JPanel  // set the x,y points in t
             points.add(new Point2D.Double(x,y));
         }
 
-        addMouseListener(this);				//mouse listener
+        addMouseListener(this);				//add mouse listener
         addMouseMotionListener(this);
     }
 
@@ -179,7 +181,7 @@ class MinOrientedBoundingBoxTestPanel extends JPanel  // set the x,y points in t
 
 class MinOrientedBoundingBoxComputer
 {
-    static List<Point2D> computeCorners(List<Point2D> points) // bounding points compute to draw the corners
+    static List<Point2D> computeCorners(List<Point2D> points) // bounding points compute to draw the edges
     {
         List<Point2D> convexHullPoints = 
             computeConvexHullPoints(points); 
@@ -188,7 +190,7 @@ class MinOrientedBoundingBoxComputer
         Rectangle2D r = computeAlignedBounds(
             convexHullPoints, alignmentPointIndex);
         
-     // stored the min and max of x,y values in the list
+     // find the min and max of x,y points
         
         List<Point2D> alignedCorners = new ArrayList<Point2D>(); 
         alignedCorners.add(new Point2D.Double(r.getMinX(), r.getMinY()));
@@ -200,7 +202,13 @@ class MinOrientedBoundingBoxComputer
         double angleRad = computeEdgeAngleRad(
             convexHullPoints, alignmentPointIndex);
 
-        AffineTransform at = new AffineTransform(); // recalculated the points values
+//        The <code>AffineTransform</code> class represents a 2D affine transform
+//        that performs a linear mapping from 2D coordinates to other 2D
+//        coordinates that preserves the "straightness" and
+//        "parallelness" of lines.  Affine transformations can be constructed
+//        using sequences of translations, scales, flips, rotations, and shears.
+        
+        AffineTransform at = new AffineTransform(); 
         at.concatenate(
             AffineTransform.getTranslateInstance(
                 center.getX(), center.getY()));
@@ -280,7 +288,7 @@ class MinOrientedBoundingBoxComputer
         }
         return result;
     }
-// compute the max value points to create a rectangular 2D object
+// compute the max value points to create a rectangular 2D object_line
     private static Rectangle2D computeBounds(
         List<Point2D> points)
     {
@@ -297,7 +305,7 @@ class MinOrientedBoundingBoxComputer
             maxX = Math.max(maxX, x);
             maxY = Math.max(maxY, y);
         }
-        return new Rectangle2D.Double(minX, minY, maxX-minX, maxY-minY);
+        return new Rectangle2D.Double(minX, minY, maxX-minX, maxY-minY);//X,Y min and max values...
     }
 
     static Path2D createPath(List<Point2D> points)
@@ -310,7 +318,7 @@ class MinOrientedBoundingBoxComputer
             double y = p.getY();
             if (i == 0)
             {
-                path.moveTo(x, y);
+               path.moveTo(x, y);
             }
             else
             {
@@ -320,7 +328,6 @@ class MinOrientedBoundingBoxComputer
         path.closePath();
         return path;
     }
-
 
     static List<Point2D> computeConvexHullPoints(List<Point2D> points)
     {
@@ -333,8 +340,10 @@ class MinOrientedBoundingBoxComputer
         {
             ps.add(new Point((int)p.getX(), (int)p.getY()));
         }
+        
         List<Point> convexHull = FastConvexHull.execute(ps);
         List<Point2D> result = new ArrayList<Point2D>();
+        
         for (Point p : convexHull)
         {
             double x = p.getX();
